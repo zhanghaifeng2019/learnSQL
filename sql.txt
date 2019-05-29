@@ -318,8 +318,6 @@ SELECT
 FROM
 	eventlog
 	INNER JOIN events ON events.eventID = eventlog.eventID
-WHERE  events.event_summary LIKE '%との闘い'
-ORDER BY userID,startTime;
-
+WHERE  events.event_summary LIKE '%との闘い';
 
 
