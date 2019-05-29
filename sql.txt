@@ -1,0 +1,279 @@
+﻿#すてべのデータの件数を表示する．这里不需要group by从句
+SELECT COUNT(*) FROM players;
+
+
+＃条件にあったデータの件数を表示する
+
+SELECT COUNT(*) FROM players WHRER level=6;
+
+＃逆順　DESC
+#昇順　ASC
+SELECT * FROM players ORDER BY level DESC;
+
+＃上位3件だけ表示する	
+
+SELECT * FROM player  ODER BY level DESC LIMIT 3;
+
+#職業ごとに人数を集計する job_id毎に人数が表示される
+
+SELECT job_id,COUNT(*) FROM players GROUP BY job_id;
+
+#增INSERT
+＃データを追加するVALUESの前後にスペースがないように気をつけてください
+INSERT INTO players(id,name,level,job_id)VALUES(11,"霧島京子",1,1);
+
+＃一度に複数のデータを追加する
+INSERT INTO players(id,name,level,job_id)
+VALUES
+(13, "霧島3号", 1, 1),
+(14, "霧島4号", 1, 1)
+;
+
+# データを更新する
+UPDATE players SET level = 10 WHERE id = 11;
+
+＃データを更新する.levelを1増加
+UPDATE players SET level = level + 1 WHERE id = 12
+
+＃データを削除する
+DELETE FROM players WHERE id = 13;
+DELETE FROM players WHERE id >= 11;
+
+#2つのテーブルを結合しよう
+#内部結合（けつごう）
+#根据id进行结合，
+#両方のテーブルで共通のデータだけを表示する。
+SELECT * FROM players INNER JOIN jobs ON jobs.id=players.job_id;
+
+#左結合（両方のテーブルで共通のデータとplayersテーブルのデータを表示する）
+SELECT * FROM players LEFT JOIN jobs ON jobs.id=players.job_id;
+
+＃右結合　（両方のテーブルで共通のデータとjobsテーブルのデータを表示する）
+SELECT * FROM players RIGHT JOIN jobs ON jobs.id=players.job_id;
+
+＃結合したテーブルを操作しよう
+＃すべての記録を表示する
+SELECT * FROM players INNER JOIN jobs ON 
+jobs.id = players.job_id;
+
+＃結合したテーブルで、指定カラムだけ表示する //注意各列之间有逗号。
+SELECT name,level,vitality FROM players INNER JOIN jobs ON
+jobs.id=players.job_id;
+
+#strengthが５以上の記録を取り出す
+SELECT name, level, strength FROM players INNER JOIN jobs ON 
+jobs.id = players.job_id WHERE strength >= 5;
+
+職業ごとに人数を集計する
+SELECT job_id, job_name, COUNT(*) FROM players INNER JOIN jobs ON 
+jobs.id = players.job_id GROUP BY job_id;
+
+
+
+
+                                                  从这里开始看着图片对照着来学习
+
+＃三つの表を結合（通过user,先连接jobs,再通过user连接area）
+SELECT * FROM users
+INNER JOIN jobs ON jobs.jobID = users.jobID
+INNER JOIN area ON area.areaID = users.areaID;
+
+#間違いやすい
+- SELECTのカンマ忘れ、カンマ多すぎ
+- テーブル連結時のテーブル名不足。因为areaID有两个，所以要指明表名（users.areaID)
+- WHEREでAND忘れ
+
+SELECT userID,name,users.areaID,area_name 
+FROM users
+    INNER JOIN jobs ON jobs.jobID = users.jobID
+    INNER JOIN area ON area.areaID = users.areaID
+WHERE 
+    userID>=10 AND userID<=20;
+
+
+-- 每一次登录的时间
+SELECT startTime,logID FROM eventlog;
+
+-- 每一次登录的日期。只包含年月日，不包含具体的时间
+SELECT DATE(startTime),logID FROM eventlog ;
+
+-- 某一天登录的的总次数。也就是某一天logID的总数。
+-- count函数一定要跟着group by从句。按照一个字段来合计
+SELECT DATE(startTime),COUNT(logID) FROM eventlog GROUP BY DATE(startTime);
+
+
+--四月以後のログインの回数の集計
+--where 在group by 前面
+    SELECT DATE(startTime),COUNT(logID) 
+    FROM eventlog 
+    WHERE DATE(startTime)>="2015-04-01" 
+    GROUP BY DATE(startTime);
+
+--某个时间区间的登录次数的合计.用between and。包含两个时间点
+    SELECT DATE(startTime),COUNT(logID) 
+    FROM eventlog 
+    WHERE DATE(startTime) BETWEEN "2015-04-01" AND "2015-04-20"
+    GROUP BY DATE(startTime);
+
+
+-- 月次のアクセス数を求める
+-- 年、月だけが必要になるので、DATE_FORMAT関数を使う
+SELECT DATE_FORMAT(startTime, '%Y-%m'), COUNT(logID)
+FROM eventlog
+GROUP BY DATE_FORMAT(startTime, '%Y-%m');
+
+
+-- カラム名を別名で表示する (AS)
+SELECT COUNT(*) AS "playerの合計" FROM players; //显示100
+
+
+-- 不算一些注销的账号。即deleted_at栏如果有时间就说明，注销了，
+-- delete_at为null就表明账号还在。
+-- 注意null 要用IS 来表示等于
+SELECT COUNT(*) AS "ユーザの合計" 
+FROM users
+WHERE deleted_at IS NULL;                      //显示80，有20个人注销了账号
+
+
+--今度はアクティブユーザ数の合計を求める
+--会員登録しているが、一度もゲームをしたことがない。幽霊ユーザを取り除く
+--eventlogという表からアクティブユーザ数の合計を求める
+
+--eventlogからuserIDだけを重複なしで表示する（ちょうふく）
+SELECT DISTINCT userID AS アクティブユーザ FROM eventlog;
+
+--deleted_at　は null の場合だけを表示する
+SELECT DISTINCT eventlog.userID AS アクティブユーザ 
+FROM eventlog
+INNER JOIN users ON users.userID=eventlog.userID
+WHERE deleted_at IS NULL;
+
+--カウントする
+SELECT COUNT(DISTINCT eventlog.userID) AS アクティブユーザ 
+FROM eventlog
+INNER JOIN users ON users.userID=eventlog.userID
+WHERE deleted_at IS NULL;                       //显示66。有14个人没有玩过游戏。
+
+--日付（日にち）毎にアクティブユーザ数を表示する
+SELECT 
+DATE(startTime) AS "日付",
+COUNT(DISTINCT eventlog.userID) AS "アクティブユーザ" 
+FROM eventlog
+INNER JOIN users ON users.userID=eventlog.userID
+WHERE deleted_at IS NULL
+GROUP BY DATE(startTime); 
+
+
+
+
+#计算每个userID的经验值的和、经验值的平均
+
+1，先找出这两个字段（userID ,increase_exp)
+    SELECT
+        eventlog.userID AS "ユーザーID",
+        events.increase_exp AS "獲得経験値"
+    FROM
+        eventlog
+        INNER JOIN events ON events.eventID = eventlog.eventID;
+
+2,计算和。
+
+    SELECT
+        eventlog.userID AS "ユーザーID",
+        SUM(events.increase_exp) AS "獲得経験値の合計"
+    FROM
+        eventlog
+        INNER JOIN events ON events.eventID = eventlog.eventID
+    GROUP BY eventlog.userID;
+
+  group by userID 然后 sum(increase_exp)
+  gropu by 表示将很多相同的userID放到一组。
+  在这一组之内因为要计算同一个userID的increase_exp的和
+  所以一个userID 对应 一个increase_exp的和
+
+3,计算平均
+    SELECT
+        eventlog.userID AS "ユーザーID",
+        SUM(events.increase_exp) AS "獲得経験値の合計",
+        AVG(events.increase_exp) AS "獲得経験値の平均"
+    FROM
+        eventlog
+        INNER JOIN events ON events.eventID = eventlog.eventID
+    GROUP BY eventlog.userID;
+
+4, データを絞り込む。合計3000以上のユーザしか表示しない
+  　　HAVING从句放在GROUP BY 之后，where从句放在GROUP BY 之前
+
+    SELECT
+        eventlog.userID AS "ユーザーID",
+        SUM(events.increase_exp) AS "獲得経験値の合計",
+        AVG(events.increase_exp) AS "獲得経験値の平均"
+    FROM
+        eventlog
+        INNER JOIN events ON events.eventID = eventlog.eventID
+    GROUP BY eventlog.userID
+    HAVING SUM(events.increase_exp)>=3000;
+
+5,我想用户最开始玩游戏的时间，和最后一次玩游戏的时间。
+    SELECT
+        eventlog.userID AS "ユーザーID",
+        MIN(startTime) AS "開始日",
+        MAX(endTime) AS "終了日"
+    FROM
+        eventlog
+    GROUP BY eventlog.userID
+
+
+SELECT文の処理順 : select文不是从上到下按照顺序执行的
+- 1. FROM	対象テーブルからデータを取り出す
+- 2. WHERE	条件に一致するレコードを絞り込み
+- 3. GROUP BY	グループ化
+- 4. HAVING	集計結果から絞り込み
+- 5. SELECT	指定したカラムだけを表示
+
+
+                                        SQLの四則演算
+足し算	「30 + 10」は、「40」
+引き算	「30 - 10」は、「20」
+掛け算	「30 * 10」は、「300」
+割り算	「30 / 10」は、「3」
+カッコの中を先に計算	「10 * (2 + 3)」は、「60」
+
+-- 日付に関する計算
+    SELECT
+        userID AS ユーザーID,
+        MIN(startTime) AS 開始日,
+        MAX(endTime) AS 終了日,
+        DATE(MAX(endTime))-DATE(MIN(startTime))+1 AS "プレイ期間"
+    FROM eventlog
+    GROUP BY userID;
+
+-- ユーザーの年齢を計算をする。
+    //TIMESTAMPDIFF(YEAR, (誕生日), (現在の日時))
+
+    SELECT
+        userID AS ユーザーID,
+        birth AS "生年月日",
+        YEAR(CURRENT_DATE()) AS "現在の年",
+        YEAR(CURRENT_DATE())-YEAR(birth) AS "数え年",
+        TIMESTAMPDIFF(YEAR,birth,CURRENT_DATE) AS "満年齢"
+    FROM users;
+
+-- ユーザーの平均年齢を求める
+    SELECT
+        AVG(TIMESTAMPDIFF(YEAR, birth, '2016-12-01')) AS "平均年齢"
+    FROM
+        users;
+
+
+                                                        テキスト検索
+SELECT
+	events.event_summary
+FROM
+	eventlog
+	INNER JOIN events ON events.eventID = eventlog.eventID
+WHERE  events.event_summary LIKE '%との闘い'
+ORDER BY userID,startTime;
+
+
+
