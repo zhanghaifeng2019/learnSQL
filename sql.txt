@@ -201,6 +201,7 @@ INNER JOIN users ON users.userID=eventlog.userID
 WHERE deleted_at IS NULL;                       //显示66。有14个人没有玩过游戏。
 
 --日付（日にち）毎にアクティブユーザ数を表示する
+--一个字段count，另一个字段就得group by
 SELECT 
 DATE(startTime) AS "日付",
 COUNT(DISTINCT eventlog.userID) AS "アクティブユーザ" 
@@ -320,6 +321,56 @@ FROM
 	INNER JOIN events ON events.eventID = eventlog.eventID
 WHERE  events.event_summary LIKE '%との闘い';
 
-                                                サブクエリでアクティブユーザー数を求め 
+
+                                                サブクエリで日次のアクティブユーザー数を求めてみたいと思います。需要多看
+
+--首先用sql语句取得一个表，然后对取得的表在套上sql语句。サブクエリ要从里到外地看
+-- subquary里有两个字段名，在mainquary里面也是这两个字段名
+-- Every derived table must have its own alias 注意括号subquary后面必须给这个表添加一个表名AS ActiveUsers
+
+SELECT day,COUNT(user)
+FROM(SELECT DISTINCT
+        DATE(startTime) AS day,
+        eventlog.userID AS user
+     FROM eventlog
+        INNER JOIN users ON users.userID = eventlog.userID
+     WHERE deleted_at IS NULL)
+AS ActiveUsers
+GROUP BY day;
+
+                                                  case从句
+
+すでに分類されたデータを別の基準でグループ分けしてみます。
+たとえば、オンラインRPGでユーザーのレベルを初級・中級・上級に分けて集計する、
+都道府県を関東や関西といった地域にまとめて集計する。
+そのために、SQLのCASE(ケース)命令を紹介します。
+
+-- データを分類し直す
+SELECT
+	userID,
+	level,
+	CASE
+		WHEN (条件式1) THEN (出力1)
+		WHEN (条件式2) THEN (出力2)
+		ElSE (出力3)
+	END AS column_name
+FROM
+	users
 
 
+--注意case里面没有逗号
+--END后面得有一个字段名
+--注意条件的顺序，如果把level >=2条件写在level >=4条件前面
+  level >=4条件就会没用
+  所以要从大到小的排列条件
+
+    SELECT
+        userID,
+        level,
+        CASE
+            WHEN level >=4 THEN "上級"
+            WHEN level >=2 THEN "中級"
+            ELSE "初級"
+            END AS "クラス"
+    FROM
+        users;
