@@ -312,12 +312,14 @@ SELECT文の処理順 : select文不是从上到下按照顺序执行的
         users;
 
 
-                                                        テキスト検索 用LIKE 和 % 来匹配字符串
+                                                テキスト検索 用LIKE 和 % 来匹配字符串
 SELECT
 	events.event_summary
 FROM
 	eventlog
 	INNER JOIN events ON events.eventID = eventlog.eventID
 WHERE  events.event_summary LIKE '%との闘い';
+
+                                                サブクエリでアクティブユーザー数を求め 
 
 
