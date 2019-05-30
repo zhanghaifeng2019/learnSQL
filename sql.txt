@@ -201,7 +201,7 @@ INNER JOIN users ON users.userID=eventlog.userID
 WHERE deleted_at IS NULL;                       //显示66。有14个人没有玩过游戏。
 
 --日付（日にち）毎にアクティブユーザ数を表示する
---一个字段count，另一个字段就得group by
+--如果select后面跟了至少两个字段，一个字段count或者sum，另一个字段就得group by
 SELECT 
 DATE(startTime) AS "日付",
 COUNT(DISTINCT eventlog.userID) AS "アクティブユーザ" 
@@ -326,7 +326,7 @@ WHERE  events.event_summary LIKE '%との闘い';
 
 --首先用sql语句取得一个表，然后对取得的表在套上sql语句。サブクエリ要从里到外地看
 -- subquary里有两个字段名，在mainquary里面也是这两个字段名
--- Every derived table must have its own alias 注意括号subquary后面必须给这个表添加一个表名AS ActiveUsers
+-- Every derived table must have its own alias 注意括号subquary后面必须给这个表添加一个表名AS ActiveUsers（別名べつめい）
 
 SELECT day,COUNT(user)
 FROM(SELECT DISTINCT
@@ -338,7 +338,7 @@ FROM(SELECT DISTINCT
 AS ActiveUsers
 GROUP BY day;
 
-                                                  case从句
+                                                  case从句，再分类
 
 すでに分類されたデータを別の基準でグループ分けしてみます。
 たとえば、オンラインRPGでユーザーのレベルを初級・中級・上級に分けて集計する、
@@ -374,3 +374,121 @@ FROM
             END AS "クラス"
     FROM
         users;
+
+                                                    クロス集計
+
+
+1. クロス集計の元になるデータを用意する
+2. サブクエリとして読み込む
+3. CASEで、特定の値だったら1にする。このとき別名を、特定の値と同じにする
+
+        CASE WHEN クラス = "初級" THEN 1 ELSE NULL END AS "初級",
+        CASE WHEN クラス = "中級" THEN 1 ELSE NULL END AS "中級",
+        CASE WHEN クラス = "上級" THEN 1 ELSE NULL END AS "上級"
+
+4. SUM関数とGROUP BYで集計する
+
+
+
+
+--先把要的数据拿出来
+    SELECT
+        startTime,
+        eventlog.userID,
+        users.level
+    FROM eventlog
+        INNER JOIN users ON users.userID = eventlog.userID;
+
+
+-- 日付のところを年月にする  DATE_FORMAT
+-- levelのところは上級、中級、初級に再分類する  CASE
+-- 去重，userID和日期一样的情况下，就要去重
+
+SELECT
+    DISTINCT
+	DATE_FORMAT(startTime,"%Y-%m") AS "日付",
+	eventlog.userID AS "ユーザ",
+	CASE
+            WHEN level >=4 THEN "上級"
+            WHEN level >=2 THEN "中級"
+            ELSE "初級"
+    END AS "クラス"
+FROM eventlog
+	INNER JOIN users ON users.userID = eventlog.userID;
+
+--CASEで、特定の値だったら1にする。このとき別名を、特定の値と同じにする
+
+    SELECT  
+        クラス,
+        CASE WHEN クラス="上級" THEN 1 ELSE 0 END AS "上級",
+        CASE WHEN クラス="中級" THEN 1 ELSE 0 END AS "中級",
+        CASE WHEN クラス="初級" THEN 1 ELSE 0 END AS "初級"
+    FROM(SELECT
+            DISTINCT
+            DATE_FORMAT(startTime,"%Y-%m") AS "日付",
+            eventlog.userID AS "ユーザ",
+            CASE
+                    WHEN level >=4 THEN "上級"
+                    WHEN level >=2 THEN "中級"
+                    ELSE "初級"
+            END AS "クラス"
+        FROM eventlog
+            INNER JOIN users ON users.userID = eventlog.userID
+    ) AS クラスわけ;
+
+--SUM関数とGROUP BYで集計する
+--汉字的引号问题，select后面，AS 的后面，group by的后面的汉字千万别打引号，容易出错。
+
+    SELECT 
+        日付,
+        SUM(CASE WHEN クラス="上級" THEN 1 ELSE 0 END) AS 上級,
+        SUM(CASE WHEN クラス="中級" THEN 1 ELSE 0 END) AS 中級,
+        SUM(CASE WHEN クラス="初級" THEN 1 ELSE 0 END) AS 初級
+    FROM(SELECT DISTINCT
+            DATE_FORMAT(startTime,"%Y-%m") AS "日付",
+            eventlog.userID AS "ユーザ",
+            CASE
+                    WHEN level >=4 THEN "上級"
+                    WHEN level >=2 THEN "中級"
+                    ELSE "初級"
+            END AS "クラス"
+        FROM eventlog
+            INNER JOIN users ON users.userID = eventlog.userID
+    ) AS クラスわけ
+    GROUP BY 日付;
+
+                                         サブクエリで、平均や割合を求め
+
+-- level大于4的记录
+    SELECT userID, name, level FROM users WHERE level >= 4;
+
+
+--平均
+    SELECT AVG(level) AS 平均レベル FROM users;
+
+
+--大于平均
+--where这里也可以写subquary，subquary后面不需要名字
+    SELECT userID,name,level FROM users WHERE level >=(SELECT AVG(level) FROM users);
+
+--平均以上のユーザ数
+
+    SELECT COUNT(userID) AS 平均以上のユーザー数
+    FROM users
+    WHERE level >=(SELECT AVG(level) FROM users);
+
+-- 全体のユーザー数を追加する
+    SELECT COUNT(userID) AS 平均以上のユーザー数,
+        (SELECT COUNT(*) FROM users) AS 全体のユーザー数
+    FROM users
+    WHERE level >=(SELECT AVG(level) FROM users);
+    
+
+--求平均值以上的人占总人数的比例
+    SELECT 
+         COUNT(userID) AS 平均以上のユーザー数,
+        (SELECT COUNT(*) FROM users) AS 全体のユーザー数,
+        COUNT(userID)/(SELECT COUNT(*) FROM users)*100 AS 割合
+        
+    FROM users
+    WHERE level >=(SELECT AVG(level) FROM users);
