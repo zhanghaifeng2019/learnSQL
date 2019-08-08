@@ -1,0 +1,38 @@
+1,打开phpmyadmin，点击想要导出的数据库。
+2,点击export(エクスポート)
+3,点击Export Method  / Custom - display all possible options (詳細 - 可能なオプションをすべて表示)
+4,如果数据库里包含汉字，日文导出为xml格式。
+
+5,点击Output / Compression 选gzipped(也可以不压缩)
+6,点击 go(実行)　下载文件
+7,建立一个新的数据库test
+8,点击import(インポート)
+9,点击chose file
+10,点击go
+
+用这个方法可以导入单张表格或者很多张表格。
+
+大きいサイズのMySQLがphpMyAdminにインポートできない
+-------------------------------------------------------------------------------------------------
+php.iniの編集   C:\xampp\php\php.ini
+
+ローカル環境にインストールしたphpMyAdminやレンタルサーバーによっては、
+php.iniが編集できますので、
+php.iniでアップロードできるファイルサイズの上限を広げる方法もあります。
+
+memory_limit = 32M
+post_max_size = 32M
+upload_max_filesize = 32M
+max_file_uploads=32
+
+このように指定できるファイルサイズを大きくすれば
+phpMyAdminでアップロードできるファイルサイズが大きくなるはずです。
+この3つのサイズは、
+memory_limit ≧ post_max_size ≧ upload_max_filesize
+にする必要があります。
+
+修正・上書き保存したら、一旦 XAMPP のコントロールパネルで phpMyAdmin と Apache を終了させます。
+（これをしないと、修正が反映されませんでした）
+
+
+
