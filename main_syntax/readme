@@ -1,0 +1,68 @@
+1.SHOW DATABASES;
+
+
+2.CREATE DATABASE database_name;
+
+
+3.USE database_name;
+
+
+//能为null的，全都设为null 这样可以减轻数据库负担。
+
+4.
+CREATE TABLE agencyinfo(
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    agency_name VARCHAR(255) COLLATE utf8_general_ci DEFAULT NULL,
+    person_in_charge VARCHAR(255) COLLATE utf8_general_ci　DEFAULT NULL,
+    tel VARCHAR(255) COLLATE utf8_general_ci DEFAULT NULL,
+    email VARCHAR(255) COLLATE utf8_general_ci DEFAULT NULL,
+    zip VARCHAR(8) COLLATE utf8_general_ci DEFAULT NULL,
+    address VARCHAR(255) COLLATE utf8_general_ci DEFAULT NULL,
+    is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+    created DATETIME,
+    modified DATETIME
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+5.
+//不包含id,插入所有column。可插入多条数据，也可插入一条数据
+
+INSERT INTO table_name 
+VALUE ('ハナコ',27), 
+('アン',34), 
+('オシン',52), 
+('ジュン',25), 
+('エリー',22);
+
+
+//只插入type 跟 price 两个column
+
+INSERT INTO table_name (type, price)
+VALUE ('ハナコ',27), 
+('アン',34), 
+('オシン',52), 
+('ジュン',25), 
+('エリー',22);
+
+
+6,
+SELECT * FROM table_name;
+
+SELECT column1,column2 FROM table_name;
+
+SELECT column1,column2 FROM table_name  WHERE id=1;                  (id 为 int 型)
+
+SELECT column1,column2 FROM table_name  WHERE name="zhanghaifeng";   (name 为 varchar 型)
+
+
+7，
+UPDATE table_name  SET column_name="~~~" WHERE id=1;
+
+UPDATE table_name  SET column_name1="~~~",column2="~~~" WHERE id=1;
+
+8,
+
+DELETE FROM table_name
+DELETE FROM table_name WHERE id=1;
+DELETE FROM table_name WHERE name="zhanghaifeng";
