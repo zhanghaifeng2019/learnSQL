@@ -77,3 +77,40 @@ DROP TABLE table_name;
 
 11,
 DROP DATABASES database_name;
+
+
+12, 通过导入文件来建立表单
+source path/file_name.sql;
+
+
+
+----------------------------------------------------------------------------------
+string function  不怎么用
+
+13,  CONCAT()
+
+SELECT CONCAT(first_name,last_name) AS "full_name" FROM table_name;
+
+SELECT CONCAT(first_name,"-",last_name) AS "full_name" FROM table_name;
+
+SELECT CONCAT_WS("-",title,name,age) AS "bookinfo" FROM table_name;                   => title-name-age
+
+
+14,   SUBSTRING()
+
+SELECT SUBSTRING("hello world",1,4);   1开始，4结束   =>hell
+
+
+SELECT SUBSTRING("hello world",7);     7开始         =>world
+
+
+
+15 ,
+SELECT CONCAT
+       (
+         SUBSTRING(title,1,10),
+         "......."
+       ) AS "short_title"
+       FROM books ;                     截取一部份title并在其后加上省略号 => he is a......
+      
+
