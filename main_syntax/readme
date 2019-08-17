@@ -166,3 +166,20 @@ SELECT fnam,age FROM books ORDER BY age ;
 SELECT fnam,age FROM books ORDER BY 2 ;   2指的age，与上面的命令相同。
 
 SELECT fname,lname FROM books ORDER BY  fname,lname;   首先fname按顺序排列，如果fname中有两个值相同，就按lname的顺序来排。
+
+
+22,LIMIT -> pagination
+
+SELECT title FROM books LIMIT 5;  取五条记录
+
+SELECT title FROM books LIMIT 0,10;  从第一行开始选，选10个
+
+
+23，LIKE  ->  search
+SELECT title,author_fname FROM books WHERE author_name LIKE "da";    搜索author_name里面包含da的字符，不管大小写
+SELECT title,author_fname FROM books WHERE author_name LIKE "____";  这里的四个下划线，表示四个字符。搜索author_name里面只有四个字符的记录。
+
+字符逃跑 \%, \_
+WHERE title LIKE "%\%%"
+WHERE title LIKE "%\_%"
+
