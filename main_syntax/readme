@@ -1,3 +1,6 @@
+心得: select 后面跟的都是column名。
+
+
 1.SHOW DATABASES;
 
 
@@ -182,4 +185,67 @@ SELECT title,author_fname FROM books WHERE author_name LIKE "____";  这里的�
 字符逃跑 \%, \_
 WHERE title LIKE "%\%%"
 WHERE title LIKE "%\_%"
+
+
+
+
+--------------------------------------------------------------------------------
+
+aggregate function 集計関数
+
+24, COUNT(); 
+
+SELECT COUNT(*) FROM books;
+SELECT COUNT(DISTINCT fname,lname )FROM books;   排除同名的，求记录的数量。
+SELECT COUNT(*) FROM books WHERE title LIKE "%the%" ;    计算title 包含the的数量
+
+
+
+25，GROUP BY();
+
+
+
+SELECT author_name,age FROM books GROUP BY author_name;
+
+author_name   age       author_name   age         
+zhang         10           zhang      10     =>  zhang      10       zhang      20  这是一组，第二个以后被隐藏了
+zhang         20           wang       15     =>  wang       1        wang       25  这是另一组，第二个以后被隐藏了
+wang          15    =>     huang      30
+wang          25
+huang         30
+
+
+SELECT author_name,COUNT(*) FROM books GROUP BY author_name;　　　先按姓名分组，再 计算没一组的数量
+
+author_name   COUNT(*)
+zhang     　　 2
+wang       　　2
+huang      　　1
+
+
+SELECT fname,lname,COUNT(*) FROM books GROUP BY fname, lname;   
+
+按fname 和 lname来分，必须是两个人的fname和lname相同还能分到同一组。否则分到不同组。
+
+
+SELECT CONCAT("released_year"," ",COUNT(*),"book(s) released") FROM books GROUP BY released_year;
+
+=> 2003 3 book(s) released;     如果后面跟了GROUP BY 从句，那么COUNT(*) 计算的是每一组的数量
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
