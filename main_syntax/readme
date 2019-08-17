@@ -114,3 +114,55 @@ SELECT CONCAT
        FROM books ;                     截取一部份title并在其后加上省略号 => he is a......
       
 
+16,REPLACE
+
+SELECT REPLACE("hello,world","hello","good");  => "good,world"
+
+SELECT REPLACE(title,"e","t")FROM books;       将title里的e全部换成t
+
+
+17，REVERSE
+
+SELECT REVERSE(title) FROM books;
+
+
+18,CHAR_LENGTH
+
+SELECT CHAR_LENGTH("hello");
+
+SELECT title,CHAR_LENGTH(title) AS length FROM books;
+
+
+
+
+19,UPPER <=> LOWER
+
+SELECT UPPER("hello,world");   =>HELLO,WORLD
+
+-----------------------------------------------------------------------------------------------------------------
+
+20,DISTINCT
+
+SELECT DISTINCT title FROM books;
+
+SELECT DISTINCT fname,lname FROM books;
+
+fname     lname
+
+zhang    haifeng         zhang haifeng
+zhang    haifeng      => wang  ming
+wang     ming            li    wei 
+li       wei
+
+
+21,ORDER BY
+
+SELECT fname FROM books ORDER BY fname;   =>按字母顺序,数字也可以排
+
+SELECT fname FROM books ORDER BY fname DESC; =>字母逆序
+
+SELECT fnam,age FROM books ORDER BY age ;
+
+SELECT fnam,age FROM books ORDER BY 2 ;   2指的age，与上面的命令相同。
+
+SELECT fname,lname FROM books ORDER BY  fname,lname;   首先fname按顺序排列，如果fname中有两个值相同，就按lname的顺序来排。
