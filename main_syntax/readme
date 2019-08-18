@@ -193,7 +193,7 @@ WHERE title LIKE "%\_%"
 
 aggregate function 集計関数
 
-24, COUNT(); 
+24, COUNT();  计算有多少条记录
 
 SELECT COUNT(*) FROM books;
 SELECT COUNT(DISTINCT fname,lname )FROM books;   排除同名的，求记录的数量。
@@ -202,8 +202,6 @@ SELECT COUNT(*) FROM books WHERE title LIKE "%the%" ;    计算title 包含the�
 
 
 25，GROUP BY();
-
-
 
 SELECT author_name,age FROM books GROUP BY author_name;
 
@@ -261,14 +259,20 @@ SELECT pages,title FROM books ORDER BY pages DESC LIMIT 1;
 
 28, SUM()
 
+SELECT SUM(age) FROM books;   把所有的页数都加起来。只有一个值。
+SELECT author_fname,author_lname,SUM(pages) FROM books GROUP BY author_fname,author_lname;
 
 
+29,AVG()
+SELECT AVG(age) FROM books; 求平均，把所有记录的age相加，除以记录数，只有一个值.
+
+后面也可跟group by ,跟 max，min，sum,count 一样
+
+SELECT author_fname,author_lname,AVG( pages) FROM books GROUP BY author_fname,author_lname;
 
 
+-------------------------------------------------------------------------------------------------
+data types
 
-
-
-
-
-
+详见database.doc 文件
 
