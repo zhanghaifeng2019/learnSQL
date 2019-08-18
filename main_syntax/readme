@@ -249,6 +249,17 @@ SELECT pages,title FROM books WHERE pages = (SELECT MAX(pages) FROM books);
 SELECT pages,title FROM books ORDER BY pages DESC LIMIT 1;
 
 
+27，find the year each author published their first book;  each  找到每一个作者第一次出版书的时间。
+    数据库语言要从后忘前看
+    
+    SELECT author_fname,author_lname,MIN(released_year) FROM books  GROUP BY author_fname,author_lname;
+    首先按author_fname,author_lname分组，然后再去取每个组里面的MIN(released_year)，author_fname,author_lname;
+    
+    SELECT CONCAT(author_fname,"",author_lname) AS author,MAX(pages) AS "longest book" 
+    FROM books 
+    GROUP BY author_fname,author_lname;
+
+28, SUM()
 
 
 
