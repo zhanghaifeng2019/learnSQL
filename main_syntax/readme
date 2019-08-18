@@ -234,7 +234,19 @@ SELECT CONCAT("released_year"," ",COUNT(*),"book(s) released") FROM books GROUP 
 
 
 
+26，MAX(),MIN()
+SELECT MIN(age)　FROM books;
 
+查找，页数最多的书名。
+SELECT MAX(pages)，title FROM boosk; 这样写是错的。MAX(pages)只有一行，然后再选title的时候，数据库就会只选第一个title。
+
+方法一:用子句，因为要运行两个句子，所以查询速度慢。
+
+SELECT pages,title FROM books WHERE pages = (SELECT MAX(pages) FROM books);
+
+方法二: 用order by
+
+SELECT pages,title FROM books ORDER BY pages DESC LIMIT 1;
 
 
 
