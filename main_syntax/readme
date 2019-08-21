@@ -285,9 +285,10 @@ NOT LIKE
 <
 =
 >=
-<=
+<= 
+AND(也可以写成&&)
+OR(也可以写成||)
 
-
-from..... where...... order by.....limit
-from..... where......group by.....limit
+select.....from..... where...AND...x like... order by.....limit
+select.....from..... where...AND...x like...group by.....limit
 
