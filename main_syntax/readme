@@ -276,3 +276,18 @@ data types
 
 详见database.doc 文件
 
+
+-------------------------------------------------------------------------------------------------
+logical charact
+！=
+NOT LIKE
+>
+<
+=
+>=
+<=
+
+
+from..... where...... order by.....limit
+from..... where......group by.....limit
+
