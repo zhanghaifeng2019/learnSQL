@@ -289,6 +289,59 @@ NOT LIKE
 AND(也可以写成&&)
 OR(也可以写成||)
 
-select.....from..... where...AND...x like... order by.....limit
+BETWEEN
+NOT BETWEEN 
+SELECT title FROM books WHERE released_year BETWEEN 2001 AND 2010; (released_year>=2001 AND released_year<=2010)
+SELECT title FROM books WHERE released_year NOT BETWEEN 2001 AND 2010;(released_year<2001 AND released_year>2010)
+
+"2017-05-02"  是一个string。
+CAST("2017-05-02" AS DATETIME) 就变成了一个 DATETIME 类型了 ;SELECT CAST("2017-05-02" AS DATETIME);    =>2017-05-02 00:00:00
+CAST("2017-05-02" as DATE)
+SELECT name,birthdt FROM people WHERE birthdt BETWEEN "2010-01-01" AND "2000-01-01";   依然会有结果但是不建议这样用。
+SELECT name,birthdt FROM people WHERE birthdt BETWEEN CAST("2010-01-01" AS DATETIME) AND CAST("2000-01-01" AS DATETIME);
+
+
+
+
+IN
+SELECT title,author_lname FROM books WHERE author_lname IN( "zhang","wang","li");                                 这个更短，更有用。
+=
+SELECT title,author_lname FROM books WHERE author_lname="zhang" OR author_lname="wang" OR author_lname="li";      这个太长不好维护
+
+
+NOT IN 
+SELECT title,released_year FROM books WHERE  released_year NOT IN(2000,2001,2002);  
+=
+SELECT title,released_year FROM books WHERE released_year != 2000 AND released_year != 2001 ANDreleased_year != 2002;
+
+SELECT title,released_year FROM books WHERE released_year>=2000 released_year NOT IN(2000,2001,2002,2003,2004 );  
+
+
+CASE
+
+books表里面没有genre这一栏，我想出版年大于2000 显示genre为mordern literature，否则显示为20th century literature
+
+SELECT title,released_year,
+       CASE
+         WHEN released_year >= 2000 THEN "mordern literature"
+         ELSE "20th century literature"
+       END AS GENRE
+FROM books;
+
+
+用星号表示存货充足与否
+ 
+SELECT title,stock_quantity 
+      CASE 
+          WHEN stock_quantity BETWEEN 0 AND 50 THEN "*"
+          WHEN stock_quantity BETWEEN 51 AND 100 THEN "**"
+          ELSE "***" 
+      END AS stock
+FORM books;
+      
+
+
+
+select.....from..... where...AND...x like... order by.....limit   最先看join 再看 group by 再看where
 select.....from..... where...AND...x like...group by.....limit
 
