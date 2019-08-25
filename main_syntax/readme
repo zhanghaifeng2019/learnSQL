@@ -405,7 +405,8 @@ CREATE TABLE orders(
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_date DATE,
     amount DECIMAL(8,2),
-    customer_id INT
+    customer_id INT,
+    FOREIGN KEY(customer_id) REFERENCES customers(id)
 );
 
 INSERT INTO orders(order_date,amount,customer_id) 
@@ -414,6 +415,9 @@ VALUES("2019/02/10",100,1),
       ("2018/11/12",130,2),
       ("2017/2/04",23,3),
       ("2018/7/12",50,3);
+  
+因为foreign key的存在，就不能插入，不存在的customer_id,例如
+INSERT INTO orders(order_date,amount,customer_id) VALUES("2020/03/05",10,1)； 就会报错。
 
    
 
