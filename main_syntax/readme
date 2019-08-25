@@ -418,7 +418,208 @@ VALUES("2019/02/10",100,1),
    
 
 
+-----------------------------------------------------------------------------------------------------------------------
+另一个例子
+join
 
+1,建立user表格
+
+    CREATE TABLE users(
+        user_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_name VARCHAR(256),
+        category_id INT
+    );
+
+2，userb表格里插入记录
+    INSERT INTO users
+    (user_name,category_id)
+    VALUES
+    ("tanaka",1),
+    ("saito",2),
+    ("zhang",3),
+    ("wang",4);
+
+    ----------------------------------------------------------------------------------
+
+    user_id     user_name        category_id
+    1             tanaka              1
+    2              saito              2
+    3              zhang              3
+    4               wang              4
+
+    ------------------------------------------------------------------------------------
+
+3，建category表格
+
+    CREATE TABLE category(
+        category_id INT PRIMARY KEY AUTO_INCREMENT,
+        category_name VARCHAR(256)
+    );
+
+4，category表格里面插入记录
+
+    INSERT INTO category
+    (category_name)
+    VALUES
+    ("music"),
+    ("football");
+
+    -----------------------------------------------------------------------------------
+
+     category_id         category_name
+        1                    music
+        2                   football
+
+    ------------------------------------------------------------------------------------
+
+5,测试join(inner join)
+
+    SELECT * FROM users u
+
+    JOIN category c
+
+    ON u.category_id =c.category_id;
+
+    -----------------------------------------------------------------------------------
+
+    user_id     user_name        category_id     category_id         category_name
+    1            tanaka               1             1                    music
+    2             saito               2             2                   football
+
+    ------------------------------------------------------------------------------------
+
+取category_id共有的部分
+
+
+6,测试left join（想显示users表里所有的内容，顺便显示与之相关的category的内容）
+
+    SELECT * FROM users u
+
+    LEFT JOIN category c
+
+    ON u.category_id =c.category_id;
+
+----------------------------------------------------------------------------------
+
+user_id     user_name        category_id     category_id         category_name
+1             tanaka              1               1                   music
+2              saito              2               2                  football
+3              zhang              3              NULL                  NULL
+4               wang              4              NULL                  NULL
+
+------------------------------------------------------------------------------------
+
+7,测试right join （想显示category表里所有的内容，顺便显示与之相关的users的内容）
+
+    SELECT * FROM users u
+
+    RIGHT JOIN category c
+
+    ON u.category_id =c.category_id;
+
+    -----------------------------------------------------------------------------------
+
+    user_id     user_name        category_id     category_id         category_name
+    1            tanaka               1             1                    music
+    2             saito               2             2                   football
+
+    ------------------------------------------------------------------------------------
+
+8,给category表格添加记录后，
+
+    INSERT INTO category
+    (category_name)
+    VALUES
+    ("food"),
+    ("running"),
+    ("movie");
+
+    -----------------------------------------------------------------------------------
+       category_id         category_name
+             1                 music
+             2                football
+             3                  food
+             4                 running
+             5                  movie
+    ------------------------------------------------------------------------------------
+
+
+9,测试right join （想显示category表里所有的内容，顺便显示与之相关的users的内容）
+
+    SELECT * FROM users u
+
+    RIGHT JOIN category c
+
+    ON u.category_id =c.category_id;
+
+    -----------------------------------------------------------------------------------
+
+    user_id     user_name        category_id     category_id         category_name
+
+    1            tanaka                1               1                 music
+    2             saito                2               2                football
+    3             zhang                3               3                  food
+    4              wang                4               4                 running
+    NULL           NULL               NULL             5                  movie
+    ------------------------------------------------------------------------------------
+
+
+
+
+----------------------------------------------------------------------------------------------
+三个表的连接
+
+
+// 建立表
+CREATE DATABASE join_test_db;
+USE join_test_db;
+ 
+CREATE TABLE monthly_sales(id VARCHAR(5),sales INT,client_id INT)ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+CREATE TABLE employee_name_entry_year(id VARCHAR(5),name VARCHAR(6),entry_year YEAR)ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+CREATE TABLE employee_address(id VARCHAR(5),prefecture VARCHAR(3))ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+ 
+INSERT INTO monthly_sales (id,sales,client_id) VALUES
+('A103','125','1'),
+('A102','50','2'),
+('A101','64','4'),
+('A104','37','6'),
+('A102','285','3'),
+('A106','300','6'),
+('A103','24','1'),
+('A101','350','2'),
+('B107','14','1');
+ 
+INSERT INTO employee_name_entry_year (id,name,entry_year) VALUES
+('A101','川越','2008'),
+('A102','大宮','2008'),
+('A103','浦和','2008'),
+('A104','戸田','2010'),
+('A105','赤羽','2012'),
+('A106','大井','2014');
+ 
+INSERT INTO employee_address (id,prefecture) VALUES
+('A101','千葉'),
+('A102','群馬'),
+('A103','栃木'),
+('A104','茨城'),
+('A105','東京'),
+('A106','神奈川');
+
+
+// using 必须是连接两张表的id名是一样的。这三张表的id名都是一样的。否则用on
+
+SELECT x.id, x.sales AS 売上, y.name AS 名前, y.entry_year AS 入社年, z.prefecture AS 出身県
+    FROM monthly_sales AS x
+JOIN employee_name_entry_year AS y
+    USING(id)
+JOIN employee_address AS z
+    USING(id);
+
+
+
+-----------------------------------------------------------------------
+
+CREATE TABLE orders(id VARCHAR(5),sales INT,client_id INT)ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
 
