@@ -271,6 +271,10 @@ SELECT AVG(age) FROM books; 求平均，把所有记录的age相加，除以记�
 SELECT author_fname,author_lname,AVG( pages) FROM books GROUP BY author_fname,author_lname;
 
 
+
+30,ROUND() 省略小数点后面的位数。具体内容查看手册
+
+
 -------------------------------------------------------------------------------------------------
 data types
 
