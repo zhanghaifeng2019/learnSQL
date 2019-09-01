@@ -1,0 +1,42 @@
+I've a table where some rows have some blank cells. 
+I tried to select such rows using IS NULL function. But the query select 0 rows.
+
+select * from zzz_fkp_registration_female where fname is null;
+
+
+Now I changed my query to:
+
+select * from zzz_fkp_registration_female where fname is null or fname ='';
+
+I got the desired result.
+
+在数据库中null跟空字符串是被严格区分的。
+但是在php中var_dump(null==""); 显示的是true。
+
+
+Some differences between them:
+
+NULL can be assigned to any type, as opposed to empty string which won't be compatible with date/numerical fields.
+
+NULL is an UNKNOWN value, it doesn't have a value as opposed to an empty string, which is a value, but empty one.
+
+As far as I'm aware of, NULL shouldn't capture memory as opposed to an empty string which does.
+
+null = null will result in null as opposed to ''='' which will result in TRUE.
+
+
+Some more differences:
+
+A LENGTH of NULL is NULL, 
+a LENGTH of an empty string is 0. 
+NULLs are sorted before the empty strings. 
+COUNT(message) will count empty strings but not NULLs 
+You can search for an empty string using a bound variable but not for a NULL. 
+
+This query:   SELECT  * FROM    mytable    WHERE   mytext = ?
+
+will never match a NULL in mytext, 
+whatever value you pass from the client. 
+To match NULLs, you'll have to use other query
+
+SELECT  *  FROM    mytable  WHERE   mytext IS NULL
