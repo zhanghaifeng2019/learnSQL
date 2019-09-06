@@ -11,6 +11,10 @@
 
 
 //能为null的，全都设为null 这样可以减轻数据库负担。
+    is_deleted TINYINT(1) NOT NULL DEFAULT 0,
+    created DATETIME,
+    modified DATETIME
+  是每个表都必须要有的，
 
 4.
 CREATE TABLE agencyinfo(
