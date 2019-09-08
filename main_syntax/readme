@@ -15,6 +15,14 @@
     created DATETIME,
     modified DATETIME
   是每个表都必须要有的，
+  删除记录的时候就把is_deleted设为1.没有删除的就是0.所有的记录都不要删除
+  根据需要还可以添加status字段。status TINYINT(1) NOT NULL DEFAULT 0,供员工来审查这写记录。
+  
+  -1 = 非承認
+  0 = 保留
+  1 = 承認
+  3 = 終了
+  
 
 4.
 CREATE TABLE agencyinfo(
