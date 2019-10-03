@@ -1,0 +1,62 @@
+
+insert 、update、deleteこの三つの処理のどれかを実行する時に、trigger の処理が自動的に呼ばれる。
+
+trigger は　ログを取る、値の検証ができる。ユーザがサインインした後、デフォルトのプロファイルのiconをデータベースに入れる
+
+
+
+
+1,anytime someone update the table, I want to log who did it . log the date it happened  the user who did it and what part they updated
+
+
+        CREATE TABLE customers (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(20),
+            email VARCHAR(40)
+        );
+
+
+
+        INSERT INTO customers(name,email)
+        VALUES("zhang","zhang@gmail.com"),
+            ("wang","wang@gmail.com"),
+            ("hua","hua@gmail.com"),
+            ("xiao","xiao@gmail.com"),
+            ("mei","mei@gmail.com");
+
+
+
+        CREATE TABLE customers_history(
+            data_added DATE,
+            user char(50),
+            customer_name char(50)
+        );
+
+
+        //在命令行里这样写可以，防止在sql语句后面打上;后，就执行。
+        //DELEMITER $$        change delemiter
+        //NOW() 指的是现在的时间，CURRENT_USER()指的是现在的user
+
+        //NEW ,the thing that is about to be created.
+            system  grabs the whole record that someone is inserting and dumps all data into the NEW object.
+            
+        //NEW.name 获取 插入customers表中的记录的name
+
+
+
+        DELEMITER $$
+            CREATE trigger customers_history_trigger  BEFORE INSERT ON customers FOR EACH ROW
+            BEGIN
+            INSERT INTO customers_history VALUES(NOW(),CURRENT_USER(),NEW.name);
+            END
+        $$
+
+
+        //change delemiter back
+        DELEMITER ;    
+
+
+        //往 customers 表里面插入数据来测试以下。
+        INSERT INTO customers(name,email) VALUES("liuliu","liuliu@gmail.com");
+
+
