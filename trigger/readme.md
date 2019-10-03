@@ -1,0 +1,1 @@
+basic usages about trigger
