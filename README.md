@@ -20,14 +20,20 @@
 
 
 xampp里面使用mysql数据库
+
 1，	打开xampp，启动shell
+
  2，输入mysqladmin -u root password "no744634" 回车
   
  3，xampp文件夹下，的  phpMyAdmin\config.inc.php 文件
+ 
  4，$cfg['Servers'][$i]['password']="no744634"  保存
+ 
  5，コマンドプロンプトを起動する  或者直接在xampp的shell里面输入
+ 
     c:\xampp\mysql\bin
  6,mysql -u root -p 
+ 
  7,输入密码 no744634
 
 
