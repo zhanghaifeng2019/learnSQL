@@ -1,0 +1,141 @@
+
+ビューを作成する
+
+1, 
+create table product (id int, name varchar(10), stock int);
+
+
+2,
+insert into product values(1, 'Display', 16);
+insert into product values(2, 'Mouse', 8);
+insert into product values(3, 'Keyboard', 12);
+insert into product values(4, 'Printer', 4);
+
+
+3,
+create view productlist as select id, name from product;
+
+
+
+4,
+作成したビューはテーブルと同じようにデータを取得することができます。次のように実行してください。
+
+select * from productlist;
+
+
+---------------------------------------------------------------------------------
+1,
+create table report (name varchar(10), num int, price int);
+
+insert into report values('Orange', 5, 320);
+insert into report values('Lemon', 3, 180);
+insert into report values('Apple', 8, 240);
+insert into report values('Orange', 4, 300);
+insert into report values('Apple', 2, 260);
+
+2,
+create view sales as select name, sum(num * price) as total from report group by name;
+
+
+3,
+select * from sales;
+
+------------------------------------------------------------------------------------
+ビューのカラム名を設定する
+
+1,
+create table stock (name varchar(10), color varchar(10), num int);
+
+insert into stock values('Mouse', 'red', 10);
+insert into stock values('Display', 'white', 4);
+insert into stock values('Printer', 'blue', 8);
+insert into stock values('Display', 'black', 5);
+
+2,
+create view product (productname, color) as select name, color from stock;
+
+3,
+select * from product;
+
+---------------------------------------------------------------------------------------
+
+命令行里面如何知道那个是view，那个是table
+mydb 是数据库名
+
+select * from INFORMATION_SCHEMA.VIEWS where TABLE_SCHEMA='mydb'¥G
+
+
+実際にビューを作成した時の CREATE VIEW 文では明示的に指定していないオプションの情報を表示する
+
+show create view staffname¥G
+
+
+
+----------------------------------------------------------------------------------------
+删除
+
+drop view staffname;
+
+drop view if exists staffname; (存在していないビュー名を指定した場合でもエラーとはなりません)
+
+
+
+----------------------------------------------------------------------------------------
+
+ALTER VIEW文を使ったビューの変更
+
+1,
+create table product (id int, name varchar(10), stock int);
+
+insert into product values(1, 'Display', 11);
+insert into product values(2, 'Mouse', 2);
+insert into product values(3, 'Keyboard', 8);
+insert into product values(4, 'Printer', 4);
+
+
+2,
+create view productlist as select id, name from product;
+
+
+3,
+select * from productlist;
+
+
+4,
+変更前との違いは stock カラムの値を追加で取得していることと、 WHERE 句を使って stock カラムの値が 5 よりも大きい値に限定していることです
+
+alter view productlist as select id, name, stock from product where stock > 5;
+
+
+select * from productlist;
+
+
+-------------------------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE VIEW文を使ったビューの変更
+CREATE VIEW 文を使用した場合は新規のビューを作成しますが、
+OR REPLACE が付いている場合、指定したビュー名のビューが存在しない場合は新規にビューを作成し、
+指定したビュー名のビューが存在している場合はビューの変更を行います。
+
+1,
+
+create table user (id int, name varchar(10), address varchar(10), old int);
+
+insert into user values(1, 'Yamada', 'Tokyo', 32);
+insert into user values(2, 'Suzuki', 'Osaka', 19);
+insert into user values(3, 'Endou', 'Tokyo', 22);
+insert into user values(4, 'Gotou', 'Nagoya', 28);
+
+
+
+2,
+create or replace view followuser as select name, old from user where address='Tokyo';
+
+
+select * from followuser;
+
+
+3,
+create or replace view followuser as select name, address from user where old>25;
+
+select * from followuser;
